@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 
 class PersonCacheImage extends StatelessWidget {
   final String imageUrl;
-  final double width, height;
+  final double? width, height;
 
-  const PersonCacheImage({Key key, this.imageUrl, this.width, this.height})
-      : super(key: key);
+  const PersonCacheImage({
+    super.key,
+    required this.imageUrl,
+    this.width,
+    this.height,
+  });
 
   Widget _imageWidget(ImageProvider imageProvider) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
-        image: DecorationImage(
-          image: imageProvider,
-          fit: BoxFit.cover,
-        ),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
       ),
     );
   }
@@ -26,20 +26,15 @@ class PersonCacheImage extends StatelessWidget {
     return CachedNetworkImage(
       width: width,
       height: height,
-      imageUrl: imageUrl ?? '',
+      imageUrl: imageUrl,
       imageBuilder: (context, imageProvider) {
         return _imageWidget(imageProvider);
       },
       placeholder: (context, url) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
+        return Center(child: CircularProgressIndicator());
       },
-      errorWidget: (context, url, error) {
-        return _imageWidget(
-          AssetImage('assets/images/noimage.jpg'),
-        );
-      },
+      errorWidget: (context, url, error) =>
+          const Center(child: Icon(Icons.broken_image_outlined)),
     );
   }
 }

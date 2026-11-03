@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:rick_and_morty/common/app_colors.dart';
-import 'package:rick_and_morty/feature/domain/entities/person_entity.dart';
-import 'package:rick_and_morty/feature/presentation/pages/person_detail_screen.dart';
-import 'package:rick_and_morty/feature/presentation/widgets/person_cache_image_widget.dart';
+import 'package:flutter_application_1/common/app_colors.dart';
+import 'package:flutter_application_1/feature/domain/entities/person_entity.dart';
+import 'package:flutter_application_1/presentation/pages/person_detail_screen.dart';
+import 'package:flutter_application_1/presentation/widgets/person_cache_image_widget.dart';
 
 class PersonCard extends StatelessWidget {
   final PersonEntity person;
 
-  const PersonCard({Key key, this.person}) : super(key: key);
+  const PersonCard({super.key, required this.person});
 
   @override
   Widget build(BuildContext context) {
@@ -27,23 +27,17 @@ class PersonCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              child: PersonCacheImage(
-                width: 166,
-                height: 166,
-                imageUrl: person.image,
-              ),
+            PersonCacheImage(
+              width: 166,
+              height: 166,
+              imageUrl: person.image,
             ),
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  const SizedBox(height: 12),
                   Text(
                     person.name,
                     style: TextStyle(
@@ -52,9 +46,7 @@ class PersonCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Container(
@@ -67,9 +59,7 @@ class PersonCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      const SizedBox(
-                        width: 8,
-                      ),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           '${person.status} - ${person.species}',
@@ -80,49 +70,32 @@ class PersonCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  const SizedBox(height: 12),
                   Text(
                     'Last known location:',
                     style: TextStyle(color: AppColors.greyColor),
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
                   Text(
                     person.location.name,
                     style: TextStyle(color: Colors.white),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    'Origin:',
-                    style: TextStyle(
-                      color: AppColors.greyColor,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 12),
+                  Text('Origin:', style: TextStyle(color: AppColors.greyColor)),
+                  const SizedBox(height: 4),
                   Text(
                     person.origin.name,
                     style: TextStyle(color: Colors.white),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
-            const SizedBox(
-              width: 12,
-            ),
+            const SizedBox(width: 12),
           ],
         ),
       ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rick_and_morty/feature/presentation/widgets/custom_search_delegate.dart';
-import 'package:rick_and_morty/feature/presentation/widgets/persons_list_widget.dart';
+import 'package:flutter_application_1/presentation/widgets/custom_search_delegate.dart';
+import 'package:flutter_application_1/presentation/widgets/persons_list_widget.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +17,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               showSearch(context: context, delegate: CustomSearchDelegate());
             },
-          )
+          ),
         ],
       ),
       body: PersonsList(),

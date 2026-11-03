@@ -1,21 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rick_and_morty/core/error/failure.dart';
-import 'package:rick_and_morty/feature/domain/entities/person_entity.dart';
-import 'package:rick_and_morty/feature/domain/usecases/get_all_persons.dart';
-import 'package:rick_and_morty/feature/presentation/bloc/person_list_cubit/person_list_state.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_application_1/core/error/failure.dart';
+import 'package:flutter_application_1/feature/domain/entities/person_entity.dart';
+import 'package:flutter_application_1/feature/domain/usecases/get_all_persons.dart';
+import 'package:flutter_application_1/presentation/bloc/person_list_cubit/person_list_state.dart';
 
-const SERVER_FAILURE_MESSAGE = 'Server Failure';
-const CACHED_FAILURE_MESSAGE = 'Cache Failure';
+const serverFailureMessage = 'Server Failure';
+const cachedFailureMessage = 'Cache Failure';
 
 class PersonListCubit extends Cubit<PersonState> {
   final GetAllPersons getAllPersons;
 
-  PersonListCubit({@required this.getAllPersons}) : super(PersonEmpty());
+  PersonListCubit({required this.getAllPersons}) : super(const PersonEmpty());
 
   int page = 1;
 
-  void loadPerson() async {
+  Future<void> loadPerson() async {
     if (state is PersonLoading) return;
 
     final currentState = state;
@@ -29,24 +28,20 @@ class PersonListCubit extends Cubit<PersonState> {
 
     final failureOrPerson = await getAllPersons(PagePersonParams(page: page));
 
-    failureOrPerson.fold((error) => emit(PersonError(message: _mapFailureToMessage(error))), (character) {
-      page++;
-      final persons = (state as PersonLoading).oldPersonsList;
-      persons.addAll(character);
-      print('List length: ${persons.length.toString()}');
-      emit(PersonLoaded(persons));
-    });
+    failureOrPerson.fold(
+      (error) => emit(PersonError(message: _mapFailureToMessage(error))),
+      (character) {
+        page++;
+        var persons = (state as PersonLoading).oldPersonsList;
+        persons = [...persons, ...character];
+        emit(PersonLoaded(persons));
+      },
+    );
   }
 
   String _mapFailureToMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return SERVER_FAILURE_MESSAGE;
-      case CacheFailure:
-        return CACHED_FAILURE_MESSAGE;
-      default:
-        return 'Unexpected Error';
-    }
+    if (failure is ServerFailure) return serverFailureMessage;
+    if (failure is CacheFailure) return cachedFailureMessage;
+    return 'Unexpected Error';
   }
-
 }

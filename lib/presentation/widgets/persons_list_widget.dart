@@ -1,76 +1,64 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rick_and_morty/feature/domain/entities/person_entity.dart';
-import 'package:rick_and_morty/feature/presentation/bloc/person_list_cubit/person_list_cubit.dart';
-import 'package:rick_and_morty/feature/presentation/bloc/person_list_cubit/person_list_state.dart';
-import 'package:rick_and_morty/feature/presentation/widgets/person_card_widget.dart';
+import 'package:flutter_application_1/feature/domain/entities/person_entity.dart';
+import 'package:flutter_application_1/presentation/bloc/person_list_cubit/person_list_cubit.dart';
+import 'package:flutter_application_1/presentation/bloc/person_list_cubit/person_list_state.dart';
+import 'package:flutter_application_1/presentation/widgets/person_card_widget.dart';
 
-class PersonsList extends StatelessWidget {
-  final scrollController = ScrollController();
-  int page = -1;
-  void setupScrollController(BuildContext context) {
-    scrollController.addListener(() {
-      if (scrollController.position.atEdge) {
-        if (scrollController.position.pixels != 0) {
-          //BlocProvider.of<PersonListCubit>(context).loadPerson();
-          context.read<PersonListCubit>().loadPerson();
-        }
-      }
-    });
+class PersonsList extends StatefulWidget {
+  const PersonsList({super.key});
+
+  @override
+  State<PersonsList> createState() => _PersonsListState();
+}
+
+class _PersonsListState extends State<PersonsList> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_loadNextPage);
+  }
+
+  void _loadNextPage() {
+    if (_scrollController.position.extentAfter < 300) {
+      context.read<PersonListCubit>().loadPerson();
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    setupScrollController(context);
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
-    return BlocBuilder<PersonListCubit, PersonState>(builder: (context, state) {
-      List<PersonEntity> persons = [];
-      bool isLoading = false;
-
-      if (state is PersonLoading && state.isFirstFetch) {
-        return _loadingIndicator();
-      } else if (state is PersonLoading) {
-        persons = state.oldPersonsList;
-        isLoading = true;
-      } else if (state is PersonLoaded) {
-        persons = state.personsList;
-      } else if (state is PersonError) {
-        return Text(
-          state.message,
-          style: TextStyle(color: Colors.white, fontSize: 25),
-        );
-      }
-      return ListView.separated(
-        controller: scrollController,
-        itemBuilder: (context, index) {
-          if (index < persons.length) {
-            return PersonCard(person: persons[index]);
-          } else {
-            Timer(Duration(milliseconds: 30), () {
-              scrollController
-                  .jumpTo(scrollController.position.maxScrollExtent);
-            });
-            return _loadingIndicator();
+  @override
+  Widget build(BuildContext context) =>
+      BlocBuilder<PersonListCubit, PersonState>(
+        builder: (context, state) {
+          if (state is PersonLoading && state.isFirstFetch) {
+            return const Center(child: CircularProgressIndicator());
           }
-        },
-        separatorBuilder: (context, index) {
-          return Divider(
-            color: Colors.grey[400],
+          if (state is PersonError) return Center(child: Text(state.message));
+
+          final List<PersonEntity> persons = switch (state) {
+            PersonLoading(:final oldPersonsList) => oldPersonsList,
+            PersonLoaded(:final personsList) => personsList,
+            _ => const <PersonEntity>[],
+          };
+          final isLoading = state is PersonLoading;
+          return ListView.separated(
+            controller: _scrollController,
+            itemCount: persons.length + (isLoading ? 1 : 0),
+            itemBuilder: (context, index) => index < persons.length
+                ? PersonCard(person: persons[index])
+                : const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+            separatorBuilder: (context, index) => Divider(color: Colors.grey[400]),
           );
         },
-        itemCount: persons.length + (isLoading ? 1 : 0),
       );
-    });
-  }
-
-  Widget _loadingIndicator() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
 }

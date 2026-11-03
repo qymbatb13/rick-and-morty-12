@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:rick_and_morty/feature/domain/entities/person_entity.dart';
-import 'package:meta/meta.dart';
-import 'package:rick_and_morty/feature/presentation/pages/person_detail_screen.dart';
-import 'package:rick_and_morty/feature/presentation/widgets/person_cache_image_widget.dart';
+import 'package:flutter_application_1/feature/domain/entities/person_entity.dart';
+import 'package:flutter_application_1/presentation/pages/person_detail_screen.dart';
+import 'package:flutter_application_1/presentation/widgets/person_cache_image_widget.dart';
 
 class SearchResult extends StatelessWidget {
   final PersonEntity personResult;
 
-  SearchResult({@required this.personResult});
+  const SearchResult({super.key, required this.personResult});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +20,7 @@ class SearchResult extends StatelessWidget {
         );
       },
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 2.0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,30 +28,20 @@ class SearchResult extends StatelessWidget {
             SizedBox(
               height: 300,
               width: double.infinity,
-              child: Container(
-                child: PersonCacheImage(
-                  imageUrl: personResult.image,
-                ),
-              ),
+              child: PersonCacheImage(imageUrl: personResult.image),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 personResult.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 26.0,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26.0),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 personResult.location.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16.0,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16.0),
               ),
             ),
           ],
